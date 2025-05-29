@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe Menu</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url('tictactoe.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+    }
+
+    #backgroundVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 99999999;
+      display: none;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+      position: relative;
+    }
+
+    .text h2, .text h4 {
+      margin: 0;
+      color: red;
+      text-align: center;
+    }
+
+    .button-group {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .content {
+      margin-top: 20px;
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
+      transition: background 1s ease;
+      padding: 10px;
+      border-radius: 10px;
+      z-index: 999999;
+    }
+
+    .btn {
+      background: linear-gradient(to right, #00d111, #006816)
+    }
+
+    .btn:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Video -->
+  <video id="backgroundVideo" autoplay loop muted>
+    <source src="Funk_Universo.mp4" type="video/mp4">
+  </video>
+
+  <!-- Konten -->
+  <div class="container">
+    <div class="text">
+      <h2 id="titleText">TIC TAC TOE</h2>
+      <h4>[By HazyFireAja]</h4>
+    </div>
+    
+    <div class="button-group">
+      <a href="TicTacToe.html"><button>Player Vs Player</button></a>
+      <a href="TTT2.html"><button>Player Vs Bot</button></a>
+    </div>
+    
+    <div class="content" id="content">
+      <button class="btn" onclick="toggleAudio()">Play / Pause <br> Funk Universo</button>
+      <audio id="myAudio" src="universo.mp3" preload="auto"></audio>
+    </div>
+  </div>
+
+  <script>
+    let videoShown = false;
+    const audio = document.getElementById("myAudio");
+    const video = document.getElementById("backgroundVideo");
+    const content = document.getElementById("content");
+    let audioStarted = false;
+    const titleText = document.getElementById("titleText");
+
+
+    function toggleAudio() {
+    if (audio.paused) {
+    if (!audioStarted) {
+      audio.currentTime = 0; // hanya reset pertama kali
+      audioStarted = true;
+    }
+    audio.play();
+    video.play();
+  } else {
+    audio.pause();
+    video.pause();
+  }
+}
+
+    audio.addEventListener("timeupdate", () => {
+  if (!videoShown && audio.currentTime >= 72.7) {
+    videoShown = true;
+    video.style.display = "block";
+    video.currentTime = 0;
+    video.play();
+    content.style.background = "transparent";
+
+    // Ubah teks saat video benar-benar diaktifkan
+    titleText.textContent = "Thanks For Respect Me:)";
+  }
+});
+
+    audio.addEventListener("ended", () => {
+  setTimeout(() => {
+    video.pause();
+    video.style.display = "none";
+    video.currentTime = 0;
+    content.style.background = "";
+    titleText.textContent = "TIC TAC TOE"; // reset teks
+    videoShown = false; // reset flag untuk pemutaran ulang
+  }, 3000); // tunggu 3 detik sebelum menghilangkan video
+});
+
+  </script>
+</body>
+</html>

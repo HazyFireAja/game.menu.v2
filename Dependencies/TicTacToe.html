@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe - PVP</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .wrapper {
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      font-size: 40px;
+      font-weight: bold;
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.1s;
+    }
+
+    .cell:hover {
+      background-color: #f0f0f0;
+      transform: scale(1.03);
+    }
+
+    .message {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #27ae60;
+    }
+
+    .win {
+      background-color: #ffeaa7 !important;
+      animation: pulse 0.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Tic Tac Toe - Player vs Player</h1>
+    <div class="message" id="message">Player X's turn</div>
+    <div class="board" id="board"></div>
+    <button class="btn" onclick="resetGame()">Reset</button>
+  </div>
+
+  <script>
+    const boardEl = document.getElementById("board");
+    const messageEl = document.getElementById("message");
+    let board = Array(9).fill("");
+    let currentPlayer = "X";
+    let gameOver = false;
+    let winCells = [];
+
+    function renderBoard() {
+      boardEl.innerHTML = "";
+      board.forEach((cell, i) => {
+        const cellEl = document.createElement("div");
+        cellEl.className = "cell";
+        cellEl.textContent = cell;
+        if (winCells.includes(i)) {
+          cellEl.classList.add("win");
+        }
+        cellEl.addEventListener("click", () => handleMove(i));
+        boardEl.appendChild(cellEl);
+      });
+    }
+
+    function handleMove(index) {
+      if (gameOver || board[index] !== "") return;
+      board[index] = currentPlayer;
+      renderBoard();
+
+      const win = checkWin(currentPlayer);
+      if (win) {
+        winCells = win;
+        renderBoard();
+        endGame(`🎉 Player ${currentPlayer} wins!`);
+      } else if (board.every(cell => cell !== "")) {
+        endGame("😐 It's a draw!");
+      } else {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        messageEl.textContent = `Player ${currentPlayer}'s turn`;
+      }
+    }
+
+    function checkWin(player) {
+      const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      for (let pattern of winPatterns) {
+        if (pattern.every(i => board[i] === player)) {
+          return pattern;
+        }
+      }
+      return null;
+    }
+
+    function endGame(msg) {
+      messageEl.textContent = msg;
+      gameOver = true;
+    }
+
+    function resetGame() {
+      board = Array(9).fill("");
+      currentPlayer = "X";
+      gameOver = false;
+      winCells = [];
+      messageEl.textContent = "Player X's turn";
+      renderBoard();
+    }
+
+    renderBoard();
+  </script>
+</body>
+</html>

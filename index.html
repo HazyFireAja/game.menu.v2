@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Menu</title>
+    <style>
+      body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center; /* Horizontal center */
+      align-items: center;     /* Vertical center */
+      background-image: url('Dependencies/gm_bg.jpeg');
+      background-size: cover;       /* supaya gambar menutupi seluruh halaman */
+      background-position: center;  /* gambar di tengah */
+      background-repeat: no-repeat;
+    }
+
+      button {
+         padding: 15px 30px;
+         font-size: 1.2em;
+         background-color: #007bff; /* biru */
+         color: white;  font-weight: bold;
+    }
+
+    .text #jumlah {
+      font-size: 18px;
+      margin: -20px 0;
+      color: red;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text"><h2>Game Menu</h2></div>
+        <div id="jumlah"><h3>Total Games: Query... </h3></div>
+        <a href="Dependencies/TTT.menu.v2.html"><button>TicTacToe</button></a>
+
+        <script>
+    // Ambil semua tombol
+    const buttons = document.querySelectorAll("button");
+
+    // Ambil elemen tempat menampilkan jumlah
+    const jumlahDiv = document.getElementById("jumlah");
+
+    // Tampilkan jumlah tombol
+    jumlahDiv.textContent = `Total Games: ${buttons.length}`;
+  </script>
+    </div>
+</body>
+</html>

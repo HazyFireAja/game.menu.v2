@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>tictactoe.com</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .wrapper {
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      font-size: 40px;
+      font-weight: bold;
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.1s;
+    }
+
+    .cell:hover {
+      background-color: #f0f0f0;
+      transform: scale(1.03);
+    }
+
+    .message {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Tic Tac Toe: <br>You vs Bot</h1>
+    <div class="message" id="message">Giliran kamu (X)</div>
+    <div class="board" id="board"></div>
+    <button class="btn" onclick="resetGame()">Reset</button>
+  </div>
+
+  <script>
+    const boardEl = document.getElementById("board");
+    const messageEl = document.getElementById("message");
+    let board = Array(9).fill("");
+    let gameOver = false;
+
+    function renderBoard() {
+      boardEl.innerHTML = "";
+      board.forEach((cell, i) => {
+        const cellEl = document.createElement("div");
+        cellEl.className = "cell";
+        cellEl.textContent = cell;
+        cellEl.addEventListener("click", () => playerMove(i));
+        boardEl.appendChild(cellEl);
+      });
+    }
+
+    function playerMove(index) {
+      if (gameOver || board[index] !== "") return;
+      board[index] = "X";
+      renderBoard();
+      if (checkWin("X")) {
+        endGame("🎉 You win!");
+      } else if (board.every(c => c !== "")) {
+        endGame("😐 It's a draw!");
+      } else {
+        messageEl.textContent = "Thinking bot...";
+        setTimeout(botMove, 300);
+      }
+    }
+
+    function botMove() {
+      const best = minimax(board, "O");
+      board[best.index] = "O";
+      renderBoard();
+      if (checkWin("O")) {
+        endGame("🤖 Bot win!");
+      } else if (board.every(c => c !== "")) {
+        endGame("😐 It's a draw!");
+      } else {
+        messageEl.textContent = "Your turn (X)";
+      }
+    }
+
+    function endGame(msg) {
+      messageEl.textContent = msg;
+      gameOver = true;
+    }
+
+    function resetGame() {
+      board = Array(9).fill("");
+      gameOver = false;
+      messageEl.textContent = "Your turn (X)";
+      renderBoard();
+    }
+
+    function checkWin(player) {
+      const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return winPatterns.some(p => p.every(i => board[i] === player));
+    }
+
+    function minimax(newBoard, player) {
+      const avail = newBoard.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+
+      if (checkWin("X")) return { score: -10 };
+      if (checkWin("O")) return { score: 10 };
+      if (avail.length === 0) return { score: 0 };
+
+      const moves = [];
+
+      for (let i = 0; i < avail.length; i++) {
+        const move = {};
+        move.index = avail[i];
+        newBoard[avail[i]] = player;
+
+        if (player === "O") {
+          const result = minimax(newBoard, "X");
+          move.score = result.score;
+        } else {
+          const result = minimax(newBoard, "O");
+          move.score = result.score;
+        }
+
+        newBoard[avail[i]] = "";
+        moves.push(move);
+      }
+
+      let bestMove;
+      if (player === "O") {
+        let bestScore = -Infinity;
+        for (let i = 0; i < moves.length; i++) {
+          if (moves[i].score > bestScore) {
+            bestScore = moves[i].score;
+            bestMove = i;
+          }
+        }
+      } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < moves.length; i++) {
+          if (moves[i].score < bestScore) {
+            bestScore = moves[i].score;
+            bestMove = i;
+          }
+        }
+      }
+
+      return moves[bestMove];
+    }
+
+    renderBoard();
+  </script>
+</body>
+</html>
